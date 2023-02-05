@@ -1,5 +1,5 @@
 import { useState } from "react";
-import decisionTree from "./pages/api/decisionTree.js";
+import decisionTree from "./decisionTree.js";
 
 export default function subjectInput() {
   const [selectedOption, setSelectedOption] = useState("Option 1");
