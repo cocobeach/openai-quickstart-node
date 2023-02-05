@@ -1,12 +1,17 @@
-import Head from "next/head";
 import { useState } from "react";
-import styles from "./index.module.css";
+import decisionTree from "./pages/api/decisionTree.js";
 
-export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
-  const [result, setResult] = useState();
+export default function subjectInput() {
+  const [selectedOption, setSelectedOption] = useState("Option 1");
+  const [options, setOptions] = useState(decisionTree["Option 1"]);
+  const [subjectSelectionResult, setSubjectSelectionResult] = useState("");
+  
+  const handleChange = event => {
+    setSelectedOption(event.target.value);
+    setOptions(decisionTree[event.target.value]);
+  };
 
-  async function onSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await fetch("/api/generate", {
@@ -14,24 +19,45 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ animal: animalInput }),
+        body: JSON.stringify({ useState: selectedOption }),
       });
-
+  
       const data = await response.json();
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
-
-      setResult(data.result);
-      setAnimalInput("");
+  
+      setSubjectSelectionResult(data.result);
     } catch(error) {
-      // Consider implementing your own error handling logic here
       console.error(error);
       alert(error.message);
     }
   }
 
   return (
+    <form onSubmit={handleSubmit}>
+      <textarea id="subject-input"></textarea>
+
+      <label htmlFor="decision-tree-select">Make a decision:</label>
+      <select id="decision-tree-select" value={selectedOption} onChange={handleChange}>
+        {options.map(option => (
+          <option value={option} key={option}>{option}</option>
+        ))}
+      </select>
+
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+const data = await response.json();
+if (response.status !== 200) {
+  throw data.error || new Error(`Request failed with status ${response.status}`);
+}
+
+setSubjectSelectionResult(data.result);
+  
+
+  /*return (
     <div>
       <Head>
         <title>OpenAI Quickstart</title>
@@ -56,3 +82,4 @@ export default function Home() {
     </div>
   );
 }
+*/
